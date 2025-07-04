@@ -31,9 +31,7 @@ app.use('/flags', express.static(flagsPath, {
 }));
 
 // Fallback for missing flags
-app.use('/flags', (req, res) => {
-  res.sendFile(path.join(flagsPath, 'default.webp'));
-});
+app.use('/flags', express.static(path.join(__dirname, 'public', 'flags')));
 
 // API routes
 app.use('/api/users', userRoutes);
