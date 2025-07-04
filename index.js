@@ -33,6 +33,7 @@ app.use('/flags', express.static(flagsPath, {
 // Fallback for missing flags
 app.use('/flags', express.static(path.join(__dirname, 'public', 'flags')));
 
+
 // API routes
 app.use('/api/users', userRoutes);
 app.use('/api/upcoming-matches', matchRoute);
