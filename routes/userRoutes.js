@@ -7,17 +7,15 @@ const {
   getUser,
   getUserProfile,
   updateUserProfile
-} = require('../lib/controllers/userController');
-
-
+} = require('../controller/UserController');
 
 // Login/Register + OTP
 router.post('/add', addUser);
 router.post('/verify-otp', verifyOtp);
 
 // Profile APIs
-router.get('/:phone', getUser); // optional
-router.get('/profile/:phone', getUserProfile); // ✅ used in Flutter "My Info"
-router.put('/profile/update', updateUserProfile); // ✅ used in Flutter "UPDATE"
+router.get('/:phone', getUser);
+router.get('/profile/:phone', getUserProfile);
+router.put('/profile/update', updateUserProfile);
 
 module.exports = router;
