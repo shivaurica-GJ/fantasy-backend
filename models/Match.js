@@ -1,22 +1,15 @@
 const mongoose = require('mongoose');
 
 const matchSchema = new mongoose.Schema({
-  title: String,
-  time: String,
-  schedule: String,
-  team1: String,
-  team2: String,
-  team1Desc: String,
-  team2Desc: String,
-  prize: String,
-  players: Array,
-  team1Flag: String,
-  team2Flag: String,
-  category: String,
-  isActive: {
-    type: Boolean,
-    default: true
-  }
+  title: { type: String, required: true },
+  time: { type: String, required: true },
+  team1: { type: String, required: true },
+  team2: { type: String, required: true },
+  team1Flag: { type: String, required: true },
+  team2Flag: { type: String, required: true },
+  category: { type: String, required: true },
+  isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Match', matchSchema);  // Changed to CommonJS export
+module.exports = mongoose.model('Match', matchSchema);

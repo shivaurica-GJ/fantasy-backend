@@ -3,12 +3,36 @@ const Match = require('../models/Match');
 // GET all matches
 const getUpcomingMatches = async (req, res) => {
   try {
-    const matches = await Match.find({ isActive: true }).sort({ createdAt: -1 });
-    res.status(200).json(matches);
+    const matches = await Match.find({ isActive: true })
+      .sort({ createdAt: -1 })
+      .maxTimeMS(30000);
+
+    if (!matches || matches.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const updatedMatches = matches.map((match) => {
+      const fixFlagUrl = (url) =>
+        url?.includes("localhost:5000")
+          ? url.replace("http://localhost:5000", "https://fantasy-backend-seven.vercel.app")
+          : url;
+
+      return {
+        ...match._doc,
+        team1Flag: fixFlagUrl(match.team1Flag),
+        team2Flag: fixFlagUrl(match.team2Flag),
+        teamAFlag: fixFlagUrl(match.teamAFlag),
+        teamBFlag: fixFlagUrl(match.teamBFlag),
+      };
+    });
+
+    res.status(200).json(updatedMatches);
   } catch (error) {
+    console.error("Error fetching matches:", error.message);
     res.status(500).json({ error: "Failed to fetch matches" });
   }
 };
+
 
 // POST add new match
 const addMatch = async (req, res) => {
