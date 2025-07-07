@@ -30,8 +30,7 @@ app.use('/flags', express.static(flagsPath, {
   }
 }));
 
-// Fallback for missing flags
-app.use('/flags', express.static(path.join(__dirname, 'public', 'flags')));
+
 
 
 // API routes
