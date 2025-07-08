@@ -19,12 +19,9 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.log('❌ MongoDB error:', err));
 
-// Static files configuration
-
-
-
-
-
+// Static files configuration - ADD THIS SECTION
+app.use(express.static(path.join(__dirname, 'public'))); // Serves files from public directory
+app.use('/flags', express.static(path.join(__dirname, 'public', 'flags'))); // Explicit flags route
 
 // API routes
 app.use('/api/users', userRoutes);
