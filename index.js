@@ -19,13 +19,18 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => console.log('❌ MongoDB error:', err));
 
-// Static files configuration - ADD THIS SECTION
-app.use(express.static(path.join(__dirname, 'public'))); // Serves files from public directory
-app.use('/flags', express.static(path.join(__dirname, 'public', 'flags'))); // Explicit flags route
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/flags', express.static(path.join(__dirname, 'public', 'flags')));
 
 // API routes
 app.use('/api/users', userRoutes);
 app.use('/api/upcoming-matches', matchRoute);
+
+// Root route
+app.get('/', (req, res) => {
+  res.send('Fantasy Backend is running!');
+});
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
