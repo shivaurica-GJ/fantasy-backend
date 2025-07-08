@@ -30,31 +30,39 @@ const connectWithRetry = () => {
     retryWrites: true,
     w: 'majority'
   })
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch(err => {
-    console.error('❌ MongoDB connection failed:', err.message);
-    console.log('Retrying connection in 5 seconds...');
-    setTimeout(connectWithRetry, 5000);
-  });
+    .then(() => console.log('✅ MongoDB connected successfully'))
+    .catch(err => {
+      console.error('❌ MongoDB connection failed:', err.message);
+      console.log('Retrying connection in 5 seconds...');
+      setTimeout(connectWithRetry, 5000);
+    });
 };
 
-// Connection Event Handlers
+// Connection Events
 mongoose.connection.on('connected', () => {
   console.log('Mongoose connected to DB');
 });
-
 mongoose.connection.on('error', (err) => {
   console.error('Mongoose connection error:', err);
 });
-
 mongoose.connection.on('disconnected', () => {
   console.log('Mongoose disconnected');
 });
-
-// Initialize connection
 connectWithRetry();
 
-// Health Check Endpoint
+// 🟢 Serve static flags from backend/public/flags
+app.use('/flags', express.static(path.join(__dirname, 'public', 'flags'), {
+  maxAge: '1y',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.webp')) {
+      res.setHeader('Content-Type', 'image/webp');
+    } else if (filePath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    }
+  }
+}));
+
+// Health Check
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
   res.status(200).json({
@@ -64,29 +72,16 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Static Files Configuration
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/flags', express.static(path.join(__dirname, 'public', 'flags'), {
-  maxAge: '1y', // Cache for 1 year
-  setHeaders: (res, path) => {
-    if (path.endsWith('.webp')) {
-      res.setHeader('Content-Type', 'image/webp');
-    } else if (path.endsWith('.png')) {
-      res.setHeader('Content-Type', 'image/png');
-    }
-  }
-}));
-
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/upcoming-matches', matchRoute);
 
-// Root Route
+// Root
 app.get('/', (req, res) => {
   res.send('Fantasy Backend is running!');
 });
 
-// Error Handling Middleware
+// Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ 
@@ -100,16 +95,16 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Start Server
+// Start
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
   console.log(`📊 Health check at http://localhost:${PORT}/health`);
 });
 
-// Graceful Shutdown
+// Shutdown
 process.on('SIGINT', () => {
   mongoose.connection.close(() => {
-    console.log('Mongoose connection disconnected through app termination');
+    console.log('Mongoose disconnected on app termination');
     process.exit(0);
   });
 });
