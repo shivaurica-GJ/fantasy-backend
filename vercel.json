@@ -8,11 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/flags/(.*)",
-      "dest": "backend/index.js"
-    },
-    {
-      "src": "/api/(.*)",
+      "src": "/(.*)",
       "dest": "backend/index.js"
     }
   ]
