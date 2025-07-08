@@ -20,15 +20,8 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.log('❌ MongoDB error:', err));
 
 // Static files configuration
-const flagsPath = path.join(__dirname, 'public/flags');
-app.use('/flags', express.static(flagsPath, {
-  maxAge: '1y',
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.webp')) {
-      res.setHeader('Content-Type', 'image/webp');
-    }
-  }
-}));
+
+
 
 
 
